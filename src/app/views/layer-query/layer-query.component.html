@@ -1,0 +1,110 @@
+<!-- CoreUI Modal -->
+<ng-template #QueryModal let-modal="modal">
+    <div class="card">
+        <div class="card-header">
+          <h5>Up/Down Stream Trace</h5>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="traceForm">
+            <div class="form-group">
+              <label for="ward">Layer</label>
+              <select [ngClass]="{'is-invalid': this.traceForm.get('layer')?.invalid && this.traceForm.get('layer')?.touched}" #layerval class="form-control" id="ward" formControlName="layer" (change)="checkWard(layerval.value)">
+                <option disabled [selected]="traceForm.get('layer')?.value === ''" value="">Select</option>
+                <option *ngFor="let i of layerList" [value]="i.TABLE_NAME">{{i.TABLE_NAME}}</option>
+              </select>
+            </div>
+
+            <div class="form-group" *ngIf="wardExist">
+              <label for="ward">Ward</label>
+              <select #val (change)="getRoadname(val.value)" class="form-control" id="ward" formControlName="ward">
+                <option *ngFor="let i of allward" [value]="i.WardID">{{i.WardName}}</option>
+              </select>
+            </div>
+          
+            <div  class="form-group" *ngIf="RoadNameExist && this.RoadNameList.length > 0">
+              <label for="ward">Road Name</label>
+              <select #layerval class="form-control" id="ward" formControlName="roadName">
+                <option disabled [selected]="traceForm.get('roadName')?.value === ''" value="">Select</option>
+                <option *ngFor="let i of RoadNameList" [value]="i.RoadName">{{i.RoadName}}</option>
+              </select>
+            </div>
+
+            <c-alert *ngIf="this.traceForm.get('layer')?.invalid && this.traceForm.get('layer')?.touched" color="secondary" class="d-flex align-items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                  class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+                  <path
+                      d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+              </svg>
+              <div>Required Field</div>
+          </c-alert>
+          
+            
+          
+            <button type="button" class="btn btn-primary" (click)="onTrace()">Trace</button>
+            <button type="button" class="btn btn-secondary" (click)="onReset()">Reset</button>
+            <button style="margin-left: 5px;" type="button" class="btn btn-secondary" (click)="getAllRecord(true)">*</button>
+            <button style="margin-left: 5px;" type="button" class="btn btn-secondary" *ngIf="AllData.length > 0" (click)="export()">Export</button>
+          </form>
+          <div *ngIf="headers.length > 0" class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+            <table class="table table-hover table-striped table-bordered" style="max-width: 100%; overflow-x: auto;">
+              
+              <thead class="thead-dark">
+                <tr>
+                  <th>#</th>
+                  <th *ngFor="let i of headers">{{i}}</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let result of AllData; let i = index">
+                  <td>{{i + 1}}</td>
+                  <td *ngFor="let header of headers">{{isObject(result[header])}}</td>
+                  
+                  
+                  
+                </tr>
+              </tbody>
+            </table>
+            <c-pagination align="center" aria-label="Page navigation example" *ngIf="totalPages > 1">
+              <!-- Previous Button -->
+              <li cPageItem [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+                <a cPageLink>Previous</a>
+              </li>
+            
+              <!-- First Page -->
+              <li cPageItem [active]="currentPage === 1" (click)="goToPage(1)">
+                <a cPageLink>1</a>
+              </li>
+            
+              <!-- Ellipsis for skipped pages before the current page -->
+              <li *ngIf="currentPage > 3" cPageItem [disabled]>
+                <a cPageLink>...</a>
+              </li>
+            
+              <!-- Pages around the current page -->
+              <li *ngFor="let page of getPagesToShow()" cPageItem [active]="currentPage === page" (click)="goToPage(page)">
+                <a cPageLink>{{ page }}</a>
+              </li>
+            
+              <!-- Ellipsis for skipped pages after the current page (only if not near the last page) -->
+              <li *ngIf="currentPage < totalPages - 2 && getPagesToShow()[getPagesToShow().length - 1] !== totalPages - 1" cPageItem [disabled]>
+                <a cPageLink>...</a>
+              </li>
+            
+              <!-- Last Page (only if totalPages > 1) -->
+              <li *ngIf="totalPages > 1" cPageItem [active]="currentPage === totalPages" (click)="goToPage(totalPages)">
+                <a cPageLink>{{ totalPages }}</a>
+              </li>
+            
+              <!-- Next Button -->
+              <li cPageItem [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+                <a cPageLink>Next</a>
+              </li>
+            </c-pagination>
+            
+            
+          </div>
+        </div>
+      </div>
+      
+  </ng-template>

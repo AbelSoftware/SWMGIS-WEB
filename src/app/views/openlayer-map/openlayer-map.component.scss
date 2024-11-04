@@ -1,0 +1,158 @@
+.map-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+
+
+  #map {
+    width: 100%;
+    height: 100vh;
+  }
+  
+  // .custom-control {
+  //   background: white;
+  //   border: 2px solid black;
+  //   padding: 5px;
+  //   position: absolute;
+  //   top: 10px;
+  //   left: 10px;
+  //   z-index: 1000;
+  
+  //   button {
+  //     background-color: #007bff; // Button background
+  //     color: white; // Button text color
+  //     border: none;
+  //     padding: 10px 20px;
+  //     cursor: pointer;
+  
+  //     &:hover {
+  //       background-color: #0056b3; // Button hover effect
+  //     }
+  //   }
+  // }
+
+  .custom-control {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 10%; /* Limit width to 10% */
+    z-index: 1000; /* Ensure it's above map layers */
+    background-color: white;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .custom-control button {
+    width: 100%; /* Make the button take full width of the control */
+  }
+  
+  
+
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Darker background for better visibility */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .popup-content {
+    background-color: #fff; /* White background for the content */
+    padding: 30px; /* Increased padding */
+    border-radius: 8px; /* More rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow for a 3D effect */
+    position: relative;
+    max-width: 500px; /* Max width for larger screens */
+    width: 90%; /* Responsive width */
+  }
+  
+  .close {
+    position: absolute;
+    top: 15px; /* Adjusted for better alignment */
+    right: 20px; /* Adjusted for better alignment */
+    font-size: 24px; /* Larger close button */
+    color: #888; /* Close button color */
+    cursor: pointer;
+  }
+  
+  .close:hover {
+    color: #f00; /* Change color on hover */
+  }
+  
+  h2 {
+    margin: 0; /* Reset margin for h2 */
+    font-size: 24px; /* Font size for title */
+    text-align: center; /* Center title */
+  }
+  
+  h1 {
+    margin: 10px 0 0; /* Top margin */
+    font-size: 20px; /* Font size for key */
+  }
+  
+  h5 {
+    margin: 0; /* Reset margin for h5 */
+    font-size: 16px; /* Font size for value */
+    color: #555; /* Grey color for value */
+  }
+  
+  span {
+    display: block; /* Block display for each item */
+    margin: 10px 0; /* Space between items */
+  }
+
+
+  @media print {
+    body * {
+      visibility: hidden; /* Hide everything */
+    }
+  
+    .map-container {
+      visibility: visible; /* Only show the map */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  
+
+
+  .form {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 1000; /* Make sure it's on top */
+  }
+
+  .ol-overlaycontainer{
+    width: 10%;
+  }
+  
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Dark background with 50% opacity */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+  }
+  
+  .spinner-border {
+    z-index: 1060; /* Higher z-index for the spinner */
+  }
+  

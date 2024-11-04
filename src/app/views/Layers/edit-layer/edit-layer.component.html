@@ -1,0 +1,37 @@
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <table>
+      <thead>
+        <tr >
+          <th *ngFor="let i of headers"> {{i}}</th>
+          
+        </tr>
+      </thead>
+      <tbody formArrayName="rows">
+        <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
+            <td *ngFor="let header of headers">
+                <input [readonly]="header === 'Id'" formControlName="{{header}}" placeholder="{{header}}" />
+              
+                <div *ngIf="row.get(header)?.invalid && row.get(header)?.touched && header != 'Id'" class="error">
+                  {{header}} is required.
+                </div>
+              </td>
+              
+
+
+          
+          </tr>
+          
+      </tbody>
+    </table>
+    <button cButton class="btn btn-primary" type="button" (click)="addRow()">Add Row</button>
+    <button style="margin-left:10px" cButton class="btn btn-primary" type="submit">Submit</button>
+  </form>
+  
+  <style>
+    .error {
+      color: red;
+      font-size: 0.8em;
+    }
+  </style>
+  

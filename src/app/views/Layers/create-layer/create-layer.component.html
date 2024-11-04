@@ -1,0 +1,109 @@
+<div class="form-group row align-items-center">
+  <div class="col-md-4" >
+    <label for="textInput">Enter Table Name</label>
+    <input 
+      id="textInput" 
+      type="text" 
+      class="form-control" 
+      [(ngModel)]="TableName" 
+      placeholder="Table Name" 
+    />
+  </div>
+  <div class="col-md-4">
+    <label for="textInput">Select Layer Type</label>
+    <select [(ngModel)]="LayerType" class="form-control">
+      <option selected value="Point">Point</option>
+      <option value="MultiLineString">MultiLineString</option>
+    </select>
+    </div>
+  </div>
+
+  
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form">
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="thead-light">
+          <tr>
+            <th *ngFor="let header of headers">{{ header.name }}</th>
+          </tr>
+        </thead>
+        <tbody formArrayName="rows">
+          <tr *ngFor="let row of rows.controls; let i = index" [formGroupName]="i">
+            <td *ngFor="let header of headers">
+              <div class="form-group">
+                <input [readonly]="header.name === 'Id' || header.name ==='objectid'"
+                  formControlName="{{header.name}}" 
+                  placeholder="{{header.name}}" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': row.get(header.name)?.invalid && row.get(header.name)?.touched}" 
+                />
+                <div *ngIf="row.get(header.name)?.invalid && row.get(header.name)?.touched" class="invalid-feedback">
+                  {{ header.name }} is required.
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+  
+    <!-- Section to add a new column with a data type selection -->
+    <div class="form-group row align-items-center">
+      <div class="col-md-4">
+        <input 
+          type="text" 
+          #newColumnName 
+          placeholder="New Column Name" 
+          class="form-control" 
+        />
+      </div>
+      
+      <div class="col-md-4">
+        <select #newColumnType class="form-control">
+          <option selected value="varchar (200)">varchar (200)</option>
+          <option value="int">Int</option>
+          <option value="boolean">Boolean</option>
+        </select>
+      </div>
+      
+      <div class="col-md-4">
+        <button 
+          type="button" 
+          class="btn btn-success" 
+          (click)="addColumn(newColumnName.value, newColumnType.value); newColumnName.value=''; newColumnType.value='varchar (200)'">
+          Add Column
+        </button>
+      </div>
+    </div>
+
+    
+    <button 
+          type="button" 
+          class="btn btn-success" 
+          (click)="addRow()">
+          Add Row
+        </button>
+    
+    <button type="submit" class="btn btn-danger">Submit</button>
+  </form>
+  
+
+
+
+ 
+
+<!-- <c-modal id="liveDemoModal" [visible]="visible" (visibleChange)="handleLiveDemoChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle>Layer Status</h5>
+    <button (click)="toggleLiveDemo()" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>Layer <b>{{TableName}}</b> Created Successful</c-modal-body>
+  <c-modal-footer>
+    <button (click)="toggleLiveDemo()" cButton color="secondary">
+      Close
+    </button>
+  </c-modal-footer>
+</c-modal> -->

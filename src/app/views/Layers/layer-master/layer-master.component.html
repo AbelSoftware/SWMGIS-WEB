@@ -1,0 +1,49 @@
+
+<c-modal [visible]="isLayer" #fullScreen [fullscreen]="true" id="fullScreen">
+  <c-modal-header>
+    <h5 cModalTitle>Full screen</h5>
+    <button (click)="toggleModel()" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <div>
+      <div class="btn-group">
+        <button
+          class="btn btn-primary"
+          [class.active]="activeTab === 'Home'"
+          (click)="setActiveTab('Home')"
+        >
+          Home
+        </button>
+        <button
+          class="btn btn-primary"
+          [class.active]="activeTab === 'Create'"
+          (click)="setActiveTab('Create')"
+        >
+          Create
+        </button>
+        <button disabled
+          class="btn btn-primary"
+          [class.active]="activeTab === 'Edit'"
+          (click)="setActiveTab('Edit')"
+        >
+          Edit
+        </button>
+      </div>
+    
+      <div *ngIf="activeTab === 'Home'" class="tab-content">
+        <app-layer-list></app-layer-list>
+      </div>
+      <div *ngIf="activeTab === 'Create'" class="tab-content">
+        <app-create-layer></app-create-layer>
+      </div>
+      <div *ngIf="activeTab === 'Edit'" class="tab-content">
+        <app-edit-layer></app-edit-layer>
+      </div>
+    </div>
+    
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton (click)="toggleModel()">Close</button>
+  </c-modal-footer>
+</c-modal>
+
