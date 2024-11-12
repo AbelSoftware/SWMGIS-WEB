@@ -155,4 +155,12 @@
   .spinner-border {
     z-index: 1060; /* Higher z-index for the spinner */
   }
+
+
+  .offcanvas.show {
+    z-index: 99999;
+  }
+  .offcanvas.showing, .offcanvas.show:not(.hiding) {
+    transform: none !important;
+  }
   

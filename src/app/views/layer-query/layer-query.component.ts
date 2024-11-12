@@ -23,10 +23,21 @@ import { IconDirective } from '@coreui/icons-angular';
 })
 export class LayerQueryComponent {
 
-  currentPage: number = 1;
+  formData = {
+    ward: '',
+    roadName: '',
+    location: '',
+    ColumnName:'',
+    tracingType: 'up'
+  };
+
+  ConditionList :any[] = ['!=','=', '<', '>', '<=', '>=', '<>', 'LIKE']
+
+  currentPage: number = 0;
   totalPages: number = 0;
   PageSize : Number = 10
 
+  ColumnName:any[]=[]
 
   layerList :any[] = []
 
@@ -45,7 +56,7 @@ export class LayerQueryComponent {
 
   constructor(private excelService : ExportService,private modalService: NgbModal,private service : MapServiceService,private layerService : LayersApiService,private fb : FormBuilder){
     this.traceForm = new FormGroup({
-      layer :new FormControl('', Validators.required),
+      layer :new FormControl('', Validators.required)
       // ward: new FormControl('', Validators.required),
       // roadName: new FormControl('', Validators.required),
       // location: new FormControl('', Validators.required),
@@ -124,12 +135,7 @@ export class LayerQueryComponent {
   }
 
 
-  formData = {
-    ward: '',
-    roadName: '',
-    location: '',
-    tracingType: 'up'
-  };
+  
 
   onTrace() {
     if (this.traceForm.valid) {
@@ -221,28 +227,39 @@ getAllRecord(All :any){
     this.RoadNameExist = false
     this.wardExist = false
   }
+  let dataType = ''
+  if(isNaN(this.traceForm.get('ConditionName')?.value)){
+    dataType = 'NVARCHAR'
+  }else{
+    dataType = 'INT'
+  }
 
   let req = {
-    "flag":"getCollectionDetails",
-    "Spname":"spGetAllWards",
+    "flag":"",
+    "Spname":"GetDynamicData",
     "data":{
-      Table:this.traceForm.get('layer')?.value,
-      roadName : this.RoadNameExist ? this.traceForm.get('roadName')?.value : null,
-      wardId : this.wardExist ? this.traceForm.get('ward')?.value : null,
+      TableName:this.traceForm.get('layer')?.value,
+      WhereCondition : this.traceForm.get('ColumnName')?.value,
+      ConditionValue : this.traceForm.get('ConditionName')?.value,
+      Operator: this.traceForm.get('Condition')?.value,
+      ConditionDataType:dataType,
       Offset : this.currentPage,
       PageSize : this.PageSize
     }
   
 }
+
+
 console.log(req)
 this.layerService.dbQuery(req).subscribe(resp=>{
   console.log(resp)
   if(resp.data.length != 0){
     this.headers = Object.keys(resp.data[0])
+    
   console.log(this.headers);
   
   this.AllData = resp.data
-
+  this.totalPages = resp.data.length-1
   console.log("Updated AllData",this.AllData)
   }else{
     return alert("No Data Found")
@@ -267,6 +284,39 @@ export(){
   }
 
   this.excelService.exportAsExcelFile(this.AllData,'layerData')
+}
+
+getColumnsName(TableName:any){
+
+  let checkExist = this.layerList.find((layer) => layer.TABLE_NAME === TableName)
+
+
+    this.totalPages = (checkExist.RowCount / 10)
+    this.totalPages = Number(this.totalPages.toFixed(0))
+
+  let req = {
+    "flag":"",
+    "Spname":"GetColumnNames",
+    "data":{
+      TableName:TableName
+    }
+  
+}
+
+
+
+
+console.log(this.traceForm.value)
+this.layerService.dbQuery(req).subscribe(resp=>{
+  this.ColumnName = resp.data
+
+  this.traceForm.addControl('ColumnName',this.fb.control('',Validators.required))
+  this.traceForm.addControl('Condition',this.fb.control('',Validators.required))
+  this.traceForm.addControl('ConditionName',this.fb.control('',Validators.required))
+
+  console.log(resp)
+})
+
 }
 
 

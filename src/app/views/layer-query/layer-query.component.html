@@ -6,15 +6,62 @@
         </div>
         <div class="card-body">
           <form [formGroup]="traceForm">
-            <div class="form-group">
-              <label for="ward">Layer</label>
-              <select [ngClass]="{'is-invalid': this.traceForm.get('layer')?.invalid && this.traceForm.get('layer')?.touched}" #layerval class="form-control" id="ward" formControlName="layer" (change)="checkWard(layerval.value)">
-                <option disabled [selected]="traceForm.get('layer')?.value === ''" value="">Select</option>
-                <option *ngFor="let i of layerList" [value]="i.TABLE_NAME">{{i.TABLE_NAME}}</option>
-              </select>
-            </div>
+            <div class="form-group row">
+              <div class="col-md-12">
+                <label for="ward">Layer</label>
+                <select 
+                  [ngClass]="{'is-invalid': this.traceForm.get('layer')?.invalid && this.traceForm.get('layer')?.touched}" 
+                  #layerval 
+                  class="form-control" 
+                  id="ward" 
+                  formControlName="layer" 
+                  (change)="getColumnsName(layerval.value)">
+                  <option disabled [selected]="traceForm.get('layer')?.value === ''" value="">Select</option>
+                  <option *ngFor="let i of layerList" [value]="i.TABLE_NAME">{{ i.TABLE_NAME }}</option>
+                </select>
+              </div>
+              </div>
+              <div *ngIf="this.traceForm.get('layer')?.value != '' && this.traceForm.get('ColumnName')" class="form-group row">
+              <div class="col-md-4">
+                <label for="ColumnName">Select Column</label>
+                <select 
+                  [ngClass]="{'is-invalid': this.traceForm.get('ColumnName')?.invalid && this.traceForm.get('ColumnName')?.touched}" 
+                  #layerval 
+                  class="form-control" 
+                  id="ColumnName" 
+                  formControlName="ColumnName">
+                  <option disabled [selected]="traceForm.get('ColumnName')?.value === ''" value="">Select</option>
+                  <option *ngFor="let i of ColumnName" [value]="i.COLUMN_NAME">{{ i.COLUMN_NAME }}</option>
+                </select>
+              </div>
 
-            <div class="form-group" *ngIf="wardExist">
+              <div *ngIf="this.traceForm.get('ColumnName')?.value != '' && this.traceForm.get('Condition')" class="col-md-4">
+                <label for="Condition">Select Condition</label>
+                <select 
+                  [ngClass]="{'is-invalid': this.traceForm.get('Condition')?.invalid && this.traceForm.get('Condition')?.touched}" 
+                  #layerval 
+                  class="form-control" 
+                  id="Condition" 
+                  formControlName="Condition">
+                  <option disabled [selected]="traceForm.get('Condition')?.value === ''" value="">Select</option>
+                  <option *ngFor="let i of ConditionList" [value]="i">{{ i }}</option>
+                </select>
+              </div>
+
+
+              <div *ngIf="this.traceForm.get('Condition')?.value != '' && this.traceForm.get('ConditionName')" class="col-md-4">
+                <label for="">Enter Condition</label>
+                <input id="textInput" 
+                formControlName ="ConditionName"
+                type="text" 
+                class="form-control" >
+              </div>
+
+
+            </div>
+            
+
+            <!-- <div class="form-group" *ngIf="wardExist">
               <label for="ward">Ward</label>
               <select #val (change)="getRoadname(val.value)" class="form-control" id="ward" formControlName="ward">
                 <option *ngFor="let i of allward" [value]="i.WardID">{{i.WardName}}</option>
@@ -27,22 +74,22 @@
                 <option disabled [selected]="traceForm.get('roadName')?.value === ''" value="">Select</option>
                 <option *ngFor="let i of RoadNameList" [value]="i.RoadName">{{i.RoadName}}</option>
               </select>
-            </div>
+            </div> -->
 
-            <c-alert *ngIf="this.traceForm.get('layer')?.invalid && this.traceForm.get('layer')?.touched" color="secondary" class="d-flex align-items-center">
+            <!-- <c-alert *ngIf="this.traceForm.get('layer')?.invalid && this.traceForm.get('layer')?.touched" color="secondary" class="d-flex align-items-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                   class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
                   <path
                       d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
               </svg>
               <div>Required Field</div>
-          </c-alert>
+          </c-alert> -->
           
             
           
             <button type="button" class="btn btn-primary" (click)="onTrace()">Trace</button>
             <button type="button" class="btn btn-secondary" (click)="onReset()">Reset</button>
-            <button style="margin-left: 5px;" type="button" class="btn btn-secondary" (click)="getAllRecord(true)">*</button>
+            <!-- <button style="margin-left: 5px;" type="button" class="btn btn-secondary" (click)="getAllRecord(true)">*</button> -->
             <button style="margin-left: 5px;" type="button" class="btn btn-secondary" *ngIf="AllData.length > 0" (click)="export()">Export</button>
           </form>
           <div *ngIf="headers.length > 0" class="table-responsive" style="max-height: 300px; overflow-y: auto;">
