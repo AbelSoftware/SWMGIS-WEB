@@ -1,21 +1,19 @@
 <!-- <div (click)="printFunction()">print</div> -->
-
-
-
-
-
 <c-offcanvas #offcanvasEnd
   placement="end"
+  [scroll]="true"
   [visible]="visible"
+  #offcanvasResponsive
+  #offcanvasScroll
 >
   <c-offcanvas-header>
     <h5 cOffcanvasTitle>Offcanvas Header</h5>
-    <!-- <button
-      cButtonClose
-      class="text-reset ms-auto"
-      cOffcanvasToggle="OffcanvasEnd"
-      aria-label="Close"
-    ></button> -->
+    <!--<button
+        cButtonClose
+        class="text-reset ms-auto"
+        cOffcanvasToggle="OffcanvasEnd"
+        aria-label="Close"
+        ></button>  --> 
   </c-offcanvas-header>
   <c-offcanvas-body>
     <form class="p-3 border rounded shadow bg-light">
@@ -49,6 +47,31 @@
 </div>
 <app-drawing-tool (messageToParent)="receiveMessage($event)" [selectedValue]="map" ></app-drawing-tool>
 <div id="map" ></div>
+
+<button cButton [cOffcanvasToggle]="offcanvasScroll.id">Enable body scrolling</button>
+
+<c-offcanvas
+  id="OffcanvasScroll"
+  [scroll]="true"
+  placement="start"
+  #offcanvasScroll
+>
+  <c-offcanvas-header>
+    <h5 cOffcanvasTitle>Layers</h5>
+    <button
+      aria-label="Close"
+      cButtonClose
+      [cOffcanvasToggle]="offcanvasScroll.id"
+      class="text-reset ms-auto"
+    ></button>
+  </c-offcanvas-header>
+  <c-offcanvas-body>
+    <p>
+      Try scrolling the rest of the page to see this option in action.
+    </p>
+  </c-offcanvas-body>
+</c-offcanvas>
+
 
 
 <!-- <div *ngIf="visible" class="form" [ngStyle]="formPosition">

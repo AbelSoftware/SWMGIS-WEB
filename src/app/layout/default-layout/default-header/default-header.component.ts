@@ -49,7 +49,8 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
   readonly #colorModeService = inject(ColorModeService);
   readonly colorMode = this.#colorModeService.colorMode;
-
+   username:any;
+   
   readonly colorModes = [
     { name: 'light', text: 'Light', icon: 'cilSun' },
     { name: 'dark', text: 'Dark', icon: 'cilMoon' },
@@ -63,6 +64,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
   constructor(private modalService: ModalService) {
     super();
+   
   }
 
   sidebarId = input('sidebar1');

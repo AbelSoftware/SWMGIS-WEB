@@ -1,4 +1,4 @@
-import { Component, Input, Injectable, ViewChild } from '@angular/core';
+import { Component, Input, Injectable, ViewChild, ChangeDetectorRef, AfterViewInit, OnInit } from '@angular/core';
 import Map from 'ol/Map';
 
 import { fromLonLat, toLonLat } from 'ol/proj';
@@ -8,7 +8,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Style from 'ol/style/Style';
 import { LayersApiService } from 'src/app/Services/layers-services/layers-api.service';
-import { ButtonDirective, ModalBodyComponent, ModalComponent, ModalFooterComponent, ModalHeaderComponent, ModalTitleDirective, OffcanvasBodyComponent, OffcanvasComponent, OffcanvasHeaderComponent, OffcanvasModule, SpinnerComponent,OffcanvasService, OffcanvasToggleDirective } from '@coreui/angular';
+import { ButtonDirective, ModalBodyComponent, ModalComponent, ModalFooterComponent, ModalHeaderComponent, ModalTitleDirective, OffcanvasBodyComponent, OffcanvasComponent, OffcanvasHeaderComponent, OffcanvasModule, SpinnerComponent, OffcanvasService, OffcanvasToggleDirective } from '@coreui/angular';
 import { Coordinate } from 'ol/coordinate';
 import { FullScreen, defaults as defaultControls } from 'ol/control.js';
 import Stroke from 'ol/style/Stroke';
@@ -39,31 +39,28 @@ interface RemainingProps {
 @Component({
   selector: 'app-openlayer-map',
   standalone: true,
-  imports: [OffcanvasModule,OffcanvasComponent,OffcanvasBodyComponent,OffcanvasHeaderComponent,SpinnerComponent, LayerQueryComponent, FormModule, CommonModule, ButtonDirective, DrawingToolComponent, ModalComponent, ModalHeaderComponent, ModalTitleDirective, ModalBodyComponent, ModalFooterComponent, FormsModule],
+  imports: [OffcanvasModule, OffcanvasComponent, OffcanvasBodyComponent,
+    OffcanvasHeaderComponent, SpinnerComponent, LayerQueryComponent,
+    FormModule, CommonModule, ButtonDirective, DrawingToolComponent,
+    ModalComponent, ModalHeaderComponent, ModalTitleDirective,
+    ModalBodyComponent, ModalFooterComponent, FormsModule],
   templateUrl: './openlayer-map.component.html',
   styleUrl: './openlayer-map.component.scss'
 })
-export class OpenlayerMapComponent {
+export class OpenlayerMapComponent implements OnInit, AfterViewInit {
 
   @Input() selectedValue: string | null = null;
 
-  
-
   formData: any = {};
-
   isLoading: boolean = false
-
   visible: boolean = false
-
   RawLayerData: any[] = []
-
   isNewForm: boolean = false
 
   modelData = {
     Id: '',
     cord: [],
     remainingProps: {
-
     } as RemainingProps
   };
   modelAdditionalData: any = ''
@@ -85,7 +82,10 @@ export class OpenlayerMapComponent {
   private linecoordinates: any[] = [];
   vectorSource!: VectorSource;
   drawInteraction: any = null;
-  constructor(private service: LayersApiService, private MapService: MapServiceService,private ExportService : ExportService) { }
+  constructor(private service: LayersApiService,
+    private MapService: MapServiceService,
+    private ExportService: ExportService,
+    private cdr: ChangeDetectorRef) { }
 
   getLatLong(data: any) {
     this.service.getlayersById(data).subscribe(response => {
@@ -153,7 +153,7 @@ export class OpenlayerMapComponent {
   }
 
   ngOnChanges() {
-    
+
     // Logic to handle changes to selectedValue
     console.log('Selected value changed:', this.selectedValue);
     // Here you can call methods to update the map based on selectedValue
@@ -178,20 +178,15 @@ export class OpenlayerMapComponent {
       console.error('Offcanvas toggle function not available');
     }
   }
-
+  ngAfterViewInit(): void  {
+  }
   ngOnInit(): void {
     console.log("openlayer")
-
     this.toggleOffcanvas()
-    
-   
-
     this.MapService.myEvent.subscribe((datas) => {
       console.log(datas)
       if (this.modelAdditionalData.selected) {
-
         let data
-
         try {
           if (this.AllLayerData[this.modelAdditionalData.LayerType][1]) {
             data = this.AllLayerData[this.modelAdditionalData.LayerType][1]
@@ -246,9 +241,7 @@ export class OpenlayerMapComponent {
     });
 
     this.MapService.map.addInteraction(select);
-
-
-  }
+    }
 
   handleFeatureClick(evt: any) {
     const feature = this.MapService.map.forEachFeatureAtPixel(evt.pixel, (feature) => {
@@ -300,10 +293,6 @@ export class OpenlayerMapComponent {
         }),
       }),
     });
-
-
-
-
     this.map.addLayer(vectorLayer);
     this.map.addControl(fullScreenControl);
 
@@ -349,10 +338,10 @@ export class OpenlayerMapComponent {
 
 
           } else if (type == 'Point') {
-            if(this.AllLayerData['Point']){
-              this.AllLayerData['Point']=this.AllLayerData['Point'].concat(this.linecoordinates)
-            }else{
-            this.AllLayerData['Point'] = this.linecoordinates
+            if (this.AllLayerData['Point']) {
+              this.AllLayerData['Point'] = this.AllLayerData['Point'].concat(this.linecoordinates)
+            } else {
+              this.AllLayerData['Point'] = this.linecoordinates
 
             }
 
@@ -388,13 +377,13 @@ export class OpenlayerMapComponent {
 
   downloadMap(): void {
     const map = this.MapService.getMap();
-    const mapSize = map.getSize() ;
-    if(this.AllLayerData.length != '{}'){
+    const mapSize = map.getSize();
+    if (this.AllLayerData.length != '{}') {
       this.exportExcel();
     }
-    
 
-    
+
+
 
     if (!mapSize || mapSize[0] <= 0 || mapSize[1] <= 0) {
       console.error('Invalid map size.');

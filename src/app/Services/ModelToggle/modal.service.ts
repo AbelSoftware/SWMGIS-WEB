@@ -7,7 +7,6 @@ import { BehaviorSubject, Subject } from 'rxjs';
 export class ModalService {
   private modalToggleSubject = new Subject<boolean>();
   modalToggle$ = this.modalToggleSubject.asObservable();
-
   toggleModal(visible: boolean) {
     this.modalToggleSubject.next(visible);
   }
@@ -17,9 +16,7 @@ export class ModalService {
   providedIn: 'root'
 })
 export class DataService {
-
-  Param : any = ''
-
+    Param : any = ''
   private valueSource = new BehaviorSubject<string>(this.Param);
   currentValue = this.valueSource.asObservable();
 

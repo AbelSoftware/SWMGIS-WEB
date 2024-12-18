@@ -19,23 +19,18 @@ export class LoginComponent {
   loginForm !: FormGroup
 
   constructor(private fb : FormBuilder,private Service : LoginServiceService,private route : Router) { 
-
     this.loginForm = this.fb.group({
       MobileNumber : ['',Validators.required],
-      Password : ['',Validators.required]
+      Password     : ['',Validators.required]
     })
-    
-
   }
-
 
   submit(){
     if(this.loginForm.invalid){
       return
     }
-
-    this.Service.login(this.loginForm.value).subscribe(response=>{
-      console.log(response)
+ 
+    this.Service.login(this.loginForm.value).subscribe(response=>{     
       sessionStorage.setItem('loginDetails',JSON.stringify(response.data))
       this.Service.toggleAuthenticator()
       this.Service.isAuthenticatedUser()

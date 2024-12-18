@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
 
 import { IconDirective } from '@coreui/icons-angular';
@@ -14,7 +14,7 @@ import {
   SidebarToggleDirective,
   SidebarTogglerDirective,
   TooltipDirective,
-  TooltipModule
+  TooltipModule, GridModule
 } from '@coreui/angular';
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
@@ -50,15 +50,28 @@ function isOverflown(element: HTMLElement) {
     ContainerComponent,
     RouterOutlet,
     DefaultFooterComponent,
-    OpenlayerMapComponent
+    OpenlayerMapComponent, GridModule
   ]
 })
 export class DefaultLayoutComponent {
   public navItems = navItems;
+  username: any;
+  lDetails: any;
+  constructor(private router: Router) {
+    this.lDetails =sessionStorage.getItem("loginDetails"); 
+    const parsedDetails = JSON.parse(this.lDetails); // Parse the string into an object
+    this.username = parsedDetails.LoginMobile; // Access the property 
+  
 
+  }
   onScrollbarUpdate($event: any) {
     // if ($event.verticalUsed) {
     // console.log('verticalUsed', $event.verticalUsed);
     // }
+  }
+  logOut() {
+    console.log("log out")
+    localStorage.removeItem('loginDetails');
+    this.router.navigate(['/login']);
   }
 }

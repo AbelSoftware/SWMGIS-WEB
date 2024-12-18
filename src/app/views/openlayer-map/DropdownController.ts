@@ -11,7 +11,7 @@ export class DropdownController extends Control {
     element.className = 'dropdown-control ol-unselectable ol-control';
     element.style.width = '10%'
 
-    super({ element: element, target: undefined });
+    super({ element: element, target: undefined }); 
 
     // Create the dropdown element
     this.dropdown = document.createElement('select');

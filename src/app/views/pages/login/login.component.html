@@ -1,4 +1,4 @@
-<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
+<!-- <div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
   <c-container breakpoint="md">
     <c-row class="justify-content-center">
       <c-col lg="10" xl="8">
@@ -40,31 +40,51 @@
                       Login
                     </button>
                   </c-col>
-                  <!-- <c-col class="text-right" xs="6">
-                    <button cButton class="px-0" color="link">
-                      Forgot password?
-                    </button>
-                  </c-col> -->
+               
                 </c-row>
               </form>
             </c-card-body>
           </c-card>
-          <!-- <c-card [ngStyle]="{'minWidth.%': 44}" class="text-white bg-primary py-5">
-            <c-card-body class="text-center">
-              <div>
-                <h2>Sign up</h2>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <button [active]="true" cButton class="mt-3" color="primary" routerLink="/register">
-                  Register Now!
-                </button>
-              </div>
-            </c-card-body>
-          </c-card> -->
+        
         </c-card-group>
       </c-col>
     </c-row>
   </c-container>
+</div> -->
+<div class="login-container">
+  <div class="overlay"></div>
+  <div class="login-box">
+    <c-container>
+      <c-row>
+        <c-col>  <div class="login-logo">
+          <img src="assets/images/mcmcrlogo.png" alt="GIS Logo" >
+      </div></c-col>
+        <c-col>
+          <div class="login-logo">
+            <img src="assets/images/bmclogo.png" alt="GIS Logo" >
+        </div>
+        </c-col>
+      </c-row>
+    </c-container>
+     
+      <div class="login-title">Welcome to SWM-GIS Portal</div>
+      <form [formGroup]="loginForm" cForm>
+          <div class="input-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" placeholder="Enter your username" required formControlName="MobileNumber">
+              <div *ngIf="this.loginForm.get('MobileNumber')?.invalid && this.loginForm.get('MobileNumber')?.touched" class="invalid-feedback">
+                UserName is required.
+              </div>
+            </div>
+          <div class="input-group">
+              <label for="password">Password</label>
+              <input type="password" id="password" name="password" placeholder="Enter your password" formControlName="Password" required>
+              <div *ngIf="this.loginForm.get('Password')?.invalid && this.loginForm.get('Password')?.touched" class="invalid-feedback">
+                Password is required.
+              </div>
+            </div>
+          <button type="button" class="btn-login"  (click)="submit()">Login</button>
+      </form>
+      <div class="footer">© 2024 GIS Application. All rights reserved.</div>
+  </div>
 </div>

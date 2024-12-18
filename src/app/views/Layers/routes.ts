@@ -1,9 +1,15 @@
 import { Routes } from '@angular/router';
-
 export const routes: Routes = [
+  // {
+  //   path: '',
+  //   loadComponent: () => import('./layer-list/layer-list.component').then(m => m.LayerListComponent),
+  //   data: {
+  //     title: 'Layer List'
+  //   }
+  // },
   {
     path: '',
-    loadComponent: () => import('./layer-list/layer-list.component').then(m => m.LayerListComponent),
+    loadComponent: () => import('./layer-master/layer-master.component').then(m => m.LayerMasterComponent),
     data: {
       title: 'Layer List'
     }

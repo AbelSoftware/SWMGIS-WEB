@@ -140,21 +140,15 @@ export class DrawingToolComponent {
     this.modalService.open(modalContent);
   }
   saveChanges() {
-
     let payload = {
       Type : this.selectedType,
       Fill : this.fillColor,
       Outlinecolor : this.outlineColor,
       outlineWidth : this.outlineWidth,
       Tranparency : this.transparency
-
     }
-
-    this.service.enableDrawing(payload)
-
-  
-    this.modalService.dismissAll(); // Close the modal after saving
-    
+    this.service.enableDrawing(payload)  
+    this.modalService.dismissAll(); // Close the modal after saving    
   }
 
   closeDrawing() {

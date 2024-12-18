@@ -27,12 +27,9 @@ export class MapServiceService {
   DrawingData: any[] = []
 
   myEvent: EventEmitter<any> = new EventEmitter();
-
-
   constructor(private xlsxService: ExportService) { }
 
   initializeMap(targetId: string) {
-
     const centerCoordinates = fromLonLat([72.874394, 19.030682]);
     const raster = new TileLayer({
       source: new OSM({
@@ -56,9 +53,7 @@ export class MapServiceService {
 
     const fullScreenControl = new FullScreen();
 
-
     this.vectorSource = new VectorSource();
-
     // Create a vector layer to display the features
     const vectorLayer = new VectorLayer({
       source: this.vectorSource,
