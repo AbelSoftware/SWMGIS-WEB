@@ -1,0 +1,35 @@
+/* Map container */
+.map-container {
+  width: 100%;
+  height: 100vh;
+}
+
+/* Custom zoom control container */
+.custom-zoom {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+}
+
+/* Zoom button styles */
+.zoom-in-button,
+.zoom-out-button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.zoom-in-button:hover,
+.zoom-out-button:hover {
+  background-color: #f0f0f0;
+}

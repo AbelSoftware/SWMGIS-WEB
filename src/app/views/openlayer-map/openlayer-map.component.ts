@@ -7,8 +7,8 @@ import { Circle, LineString, Point } from 'ol/geom';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Style from 'ol/style/Style';
-import { LayersApiService } from 'src/app/Services/layers-services/layers-api.service';
-import { ButtonDirective, ModalBodyComponent, ModalComponent, ModalFooterComponent, ModalHeaderComponent, ModalTitleDirective, OffcanvasBodyComponent, OffcanvasComponent, OffcanvasHeaderComponent, OffcanvasModule, SpinnerComponent, OffcanvasService, OffcanvasToggleDirective } from '@coreui/angular';
+import { LayersApiService } from '../../Services/layers-services/layers-api.service';
+import { ButtonDirective, ModalBodyComponent, ModalComponent, ModalFooterComponent, ModalHeaderComponent, ModalTitleDirective, OffcanvasBodyComponent, OffcanvasComponent, OffcanvasHeaderComponent, OffcanvasModule, SpinnerComponent, OffcanvasService, OffcanvasToggleDirective,ButtonModule, CardModule, AlertModule, AccordionModule, SharedModule, GridModule } from '@coreui/angular';
 import { Coordinate } from 'ol/coordinate';
 import { FullScreen, defaults as defaultControls } from 'ol/control.js';
 import Stroke from 'ol/style/Stroke';
@@ -26,7 +26,8 @@ import { FormsModule } from '@angular/forms';
 import { click } from 'ol/events/condition';
 import { Select } from 'ol/interaction';
 import CircleStyle from 'ol/style/Circle';
-import { ExportService } from 'src/app/Services/Export-service/export.service';
+import { ExportService } from '../../Services/Export-service/export.service';
+
 
 interface RemainingProps {
   [key: string]: string; // Define key-value pairs where keys are strings and values are strings
@@ -43,7 +44,8 @@ interface RemainingProps {
     OffcanvasHeaderComponent, SpinnerComponent, LayerQueryComponent,
     FormModule, CommonModule, ButtonDirective, DrawingToolComponent,
     ModalComponent, ModalHeaderComponent, ModalTitleDirective,
-    ModalBodyComponent, ModalFooterComponent, FormsModule],
+    ModalBodyComponent, ModalFooterComponent, FormsModule,ButtonModule,CardModule,AlertModule, AccordionModule,
+    SharedModule,GridModule],
   templateUrl: './openlayer-map.component.html',
   styleUrl: './openlayer-map.component.scss'
 })
@@ -82,10 +84,33 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
   private linecoordinates: any[] = [];
   vectorSource!: VectorSource;
   drawInteraction: any = null;
+  layerList:any=[]
   constructor(private service: LayersApiService,
     private MapService: MapServiceService,
     private ExportService: ExportService,
-    private cdr: ChangeDetectorRef) { }
+    private cdr: ChangeDetectorRef) {
+    let layerObj = {
+      "LayerName": "Layers",
+      "FilterKey1": null,
+      "FilterKeyValue1": null,
+      "FilterKey2": null,
+      "FilterKeyValue2": null,
+      "FilterKey3": null,
+      "FilterKeyValue3": null,
+      "FilterKey4": null,
+      "FilterKeyValue4": null,
+      "UserId": 123
+    }
+    this.service.getLayesList(layerObj).subscribe(
+      (response) => {
+        this.layerList=response.data
+        console.log(response);
+      },
+      (error) => {
+        console.log(error)
+      });
+     }
+    
 
   getLatLong(data: any) {
     this.service.getlayersById(data).subscribe(response => {
@@ -103,7 +128,7 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
         // Style the marker
         marker.setStyle(new Style({
           text: new Text({
-            text: '^', // The marker text
+            // text: '^', // The marker text
             font: '24px Arial', // Font size and family
             fill: new Fill({
               color: 'red', // Text color
@@ -153,7 +178,6 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
   }
 
   ngOnChanges() {
-
     // Logic to handle changes to selectedValue
     console.log('Selected value changed:', this.selectedValue);
     // Here you can call methods to update the map based on selectedValue
@@ -168,7 +192,16 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
 
     this.getGeometryLine(req)
   }
+  onCheckboxChange(event: any, item: any) {
+    item.selected = event.target.checked;
 
+    // // Update selectedValues array
+    //  let selectedValues = this.layerList
+    //    .filter((i) => i.selected)
+      
+
+    console.log('Selected Values:', item);
+  }
   @ViewChild('offcanvasEnd', { static: false }) offcanvasEnd: any;
 
   toggleOffcanvas() {
@@ -178,7 +211,7 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
       console.error('Offcanvas toggle function not available');
     }
   }
-  ngAfterViewInit(): void  {
+  ngAfterViewInit(): void {
   }
   ngOnInit(): void {
     console.log("openlayer")
@@ -210,6 +243,7 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
     this.map = this.MapService.getMap()
     const printControl = new PrintControl(this.MapService.map, () => this.downloadMap());
     this.map.addControl(printControl);
+    //this.map.addControl(printControl);
     // this.initiateMap()
     // let events : ("change" | "error" | "propertychange" | "change")= ''
 
@@ -241,7 +275,7 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
     });
 
     this.MapService.map.addInteraction(select);
-    }
+  }
 
   handleFeatureClick(evt: any) {
     const feature = this.MapService.map.forEachFeatureAtPixel(evt.pixel, (feature) => {
@@ -460,11 +494,11 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
 
 
   private exportExcel() {
-    const exports = [];
+    const exports: any = [];
 
     for (let i in this.AllLayerData) {
       console.log(i);
-      let data = [];
+      let data: any = [];
 
       for (let j of this.AllLayerData[i]) {
         let obj = { ...j, ...j.remainingProps };

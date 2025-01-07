@@ -6,6 +6,7 @@ import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormBuilder,FormControl,FormGroup } from '@angular/forms';
 import {LoginServiceService} from '../../../Services/login-service/login-service.service'
 import { Route, Router } from '@angular/router';
+import { TokenmanagementService } from '../../../Services/token-service/tokenmanagement.service';
 
 @Component({
     selector: 'app-login',
@@ -18,31 +19,30 @@ export class LoginComponent {
 
   loginForm !: FormGroup
 
-  constructor(private fb : FormBuilder,private Service : LoginServiceService,private route : Router) { 
+  constructor(private fb : FormBuilder,private Service : LoginServiceService,private route : Router,private ServiceToken:TokenmanagementService) { 
     this.loginForm = this.fb.group({
-      MobileNumber : ['',Validators.required],
-      Password     : ['',Validators.required]
+      Username : ['',Validators.required],
+      Password : ['',Validators.required]
     })
   }
-
   submit(){
     if(this.loginForm.invalid){
       return
-    }
- 
-    this.Service.login(this.loginForm.value).subscribe(response=>{     
+    } 
+   // console.log(this.loginForm.value)   
+    this.Service.login(this.loginForm.value).subscribe(response=>{  
+     // console.log(response) 
+      this.ServiceToken.saveToken(response.data.token) 
       sessionStorage.setItem('loginDetails',JSON.stringify(response.data))
       this.Service.toggleAuthenticator()
       this.Service.isAuthenticatedUser()
+
       this.route.navigate(['/dashboard'])
+
     },(err)=>{
       this.Service.isAuthenticatedUser()
-      console.log("Something went wrong")
+     // console.log("Something went wrong")
     })
-
-    console.log(this.loginForm)
+   // console.log(this.loginForm)
   }
-
-
-
 }

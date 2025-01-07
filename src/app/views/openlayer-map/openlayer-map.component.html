@@ -48,31 +48,74 @@
 <app-drawing-tool (messageToParent)="receiveMessage($event)" [selectedValue]="map" ></app-drawing-tool>
 <div id="map" ></div>
 
-<button cButton [cOffcanvasToggle]="offcanvasScroll.id">Enable body scrolling</button>
+<button cButton cOffcanvasToggle="OffcanvasScroll1">Layers</button>
 
 <c-offcanvas
-  id="OffcanvasScroll"
+  id="OffcanvasScroll1"
   [scroll]="true"
   placement="start"
-  #offcanvasScroll
+
 >
-  <c-offcanvas-header>
-    <h5 cOffcanvasTitle>Layers</h5>
+  <c-offcanvas-header>   
+
+<c-alert color="success">
+  <h2> Layers                        </h2>
+</c-alert>
     <button
       aria-label="Close"
       cButtonClose
-      [cOffcanvasToggle]="offcanvasScroll.id"
+      cOffcanvasToggle="OffcanvasScroll1"
       class="text-reset ms-auto"
     ></button>
+
   </c-offcanvas-header>
   <c-offcanvas-body>
-    <p>
-      Try scrolling the rest of the page to see this option in action.
-    </p>
+    <!-- <c-card >
+      <c-card-header> <h2>Layers</h2></c-card-header>
+      <c-card-body>       
+        <div *ngFor="let item of layerList" class="checkbox-item">
+          <c-form-check [switch]="true">
+            <input cFormCheckInput checked type="checkbox"  (change)="onCheckboxChange($event, item)" />
+            <label cFormCheckLabel>  {{ item.DisplayName }}</label>
+          </c-form-check>
+          <!-- <label>
+            <input
+              type="checkbox"
+              [checked]="item.selected"
+              (change)="onCheckboxChange($event, item)"
+            />
+            {{ item.DisplayName }}
+          </label> -->
+       <!--  </div>
+      </c-card-body>
+     
+    </c-card> -->
+
+      <!-- <c-container> -->
+      <!-- <c-row  >
+        <c-col> -->
+          <ul class="list-group">
+            <li class="list-group-item" *ngFor="let item of layerList">
+          <c-form-check [switch]="true">
+            <input cFormCheckInput checked type="checkbox"  (change)="onCheckboxChange($event, item)" />
+            <label cFormCheckLabel>  {{ item.DisplayName }}</label>       
+          </c-form-check>
+          </li>
+        </ul>
+          <!-- <label>
+            <input
+              type="checkbox"
+              [checked]="item.selected"
+              (change)="onCheckboxChange($event, item)"
+            />
+            {{ item.DisplayName }}
+          </label> -->
+        <!-- </c-col>
+      </c-row> -->
+      <!-- </c-container> -->
+
   </c-offcanvas-body>
 </c-offcanvas>
-
-
 
 <!-- <div *ngIf="visible" class="form" [ngStyle]="formPosition">
   <form class="p-3 border rounded shadow bg-light">

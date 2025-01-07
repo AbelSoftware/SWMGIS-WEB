@@ -13,8 +13,8 @@ import { EditControl } from '../openlayer-map/EditControl';
 import {DropdownController} from '../openlayer-map/DropdownController'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {OpenlayerMapComponent} from '../openlayer-map/openlayer-map.component'
-import { ExportService } from 'src/app/Services/Export-service/export.service';
-import { LayersApiService } from 'src/app/Services/layers-services/layers-api.service';
+import { ExportService } from '../../Services/Export-service/export.service';
+import { LayersApiService } from '../../Services/layers-services/layers-api.service';
 
 @Component({
   selector: 'app-drawing-tool',
@@ -150,14 +150,11 @@ export class DrawingToolComponent {
     this.service.enableDrawing(payload)  
     this.modalService.dismissAll(); // Close the modal after saving    
   }
-
   closeDrawing() {
     // Logic to save changes
     this.service.disableDrawing()
-    this.modalService.dismissAll(); // Close the modal after saving
-    
+    this.modalService.dismissAll(); // Close the modal after saving    
   }
-
   ExportData(){
     this.xlsxService.exportAsExcelFile(this.service.DrawingData,'Coordinates')
   }

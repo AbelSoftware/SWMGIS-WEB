@@ -71,8 +71,8 @@
       <form [formGroup]="loginForm" cForm>
           <div class="input-group">
               <label for="username">Username</label>
-              <input type="text" id="username" name="username" placeholder="Enter your username" required formControlName="MobileNumber">
-              <div *ngIf="this.loginForm.get('MobileNumber')?.invalid && this.loginForm.get('MobileNumber')?.touched" class="invalid-feedback">
+              <input type="text" id="username" name="username" placeholder="Enter your username" required formControlName="Username">
+              <div *ngIf="this.loginForm.get('Username')?.invalid && this.loginForm.get('Username')?.touched" class="invalid-feedback">
                 UserName is required.
               </div>
             </div>

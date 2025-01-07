@@ -13,7 +13,6 @@ import CircleStyle from 'ol/style/Circle';
 import { ExportService } from '../Export-service/export.service'
 import { fromCircle } from 'ol/geom/Polygon';
 import { defaults as defaultInteractions } from 'ol/interaction';
-import { OpenlayerMapComponent } from 'src/app/views/openlayer-map/openlayer-map.component';
 
 
 @Injectable({
@@ -52,7 +51,6 @@ export class MapServiceService {
 
 
     const fullScreenControl = new FullScreen();
-
     this.vectorSource = new VectorSource();
     // Create a vector layer to display the features
     const vectorLayer = new VectorLayer({

@@ -12,7 +12,6 @@ export class DropdownController extends Control {
     element.style.width = '10%'
 
     super({ element: element, target: undefined }); 
-
     // Create the dropdown element
     this.dropdown = document.createElement('select');
     this.dropdown.className = 'dropdown-menu';

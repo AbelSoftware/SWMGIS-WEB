@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -9,7 +9,7 @@ export class LayersApiService {
 
   // baseUrl : any = 'http://localhost:3000/'
   baseUrl = environment.apiUrl + 'collectingSpot';
-
+  baseUrlNew = environment.apiUrl + 'webgeometry';
   constructor(private http :HttpClient) { }
 
   // getlayersById():Observable<any>{
@@ -44,6 +44,9 @@ export class LayersApiService {
     return this.http.post(this.baseUrl+'/rawQuery',data)
   }
 
+  getLayesList(data:any):Observable<any>{
+    return this.http.post(this.baseUrlNew+'/getlayermasterdata',data)
+  }
 
   
 }

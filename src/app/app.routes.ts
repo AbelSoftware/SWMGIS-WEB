@@ -57,6 +57,13 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'zoomindemo',
+    loadComponent: () => import('./modules/zoomindemo/zoomindemo.component').then(m => m.ZoomindemoComponent),
+    data: {
+      title: 'Zoom Page'
+    }
+  },
+  {
     path: 'register',
     loadComponent: () => import('./views/pages/register/register.component').then(m => m.RegisterComponent),
     data: {
