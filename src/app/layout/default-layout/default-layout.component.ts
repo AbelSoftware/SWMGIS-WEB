@@ -19,7 +19,8 @@ import {
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
 import { navItems } from './_nav';
-import { OpenlayerMapComponent } from 'src/app/views/openlayer-map/openlayer-map.component';
+import { OpenlayerMapComponent } from '../../views/openlayer-map/openlayer-map.component';
+import { AdministratorModule } from '../../modules/administrator/administrator.module';
 
 function isOverflown(element: HTMLElement) {
   return (
@@ -50,7 +51,7 @@ function isOverflown(element: HTMLElement) {
     ContainerComponent,
     RouterOutlet,
     DefaultFooterComponent,
-    OpenlayerMapComponent, GridModule
+    OpenlayerMapComponent, GridModule,AdministratorModule
   ]
 })
 export class DefaultLayoutComponent {
@@ -60,8 +61,7 @@ export class DefaultLayoutComponent {
   constructor(private router: Router) {
     this.lDetails =sessionStorage.getItem("loginDetails"); 
     const parsedDetails = JSON.parse(this.lDetails); // Parse the string into an object
-    this.username = parsedDetails.LoginMobile; // Access the property 
-  
+    this.username = parsedDetails.Username; // Access the property  
 
   }
   onScrollbarUpdate($event: any) {

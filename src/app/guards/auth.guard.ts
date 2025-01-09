@@ -30,8 +30,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanDeactivate<u
   }
 
   private checkAuth(): boolean {
-    if (this.authService.isAuthenticatedUser()) {
-      
+    if (this.authService.isAuthenticatedUser()) {      
       return true;
     } else {
       // Redirect to the login page if the user is not authenticated

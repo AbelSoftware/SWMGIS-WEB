@@ -24,7 +24,7 @@ export class MapServiceService {
   vectorSource!: VectorSource;
   drawInteraction: any = null;
   DrawingData: any[] = []
-
+  // layerMap: Map<string, VectorLayer> = new Map();
   myEvent: EventEmitter<any> = new EventEmitter();
   constructor(private xlsxService: ExportService) { }
 

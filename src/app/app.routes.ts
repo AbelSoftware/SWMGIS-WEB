@@ -70,5 +70,12 @@ export const routes: Routes = [
       title: 'Register Page'
     }
   },
+  {
+    path: 'verifygeomtry',
+    loadComponent: () => import('./modules/administrator/verifygeometry/verifygeometry.component').then(m => m.VerifygeometryComponent),
+    data: {
+      title: 'Register Page'
+    }
+  },
   { path: '**', redirectTo: 'dashboard' }
 ];

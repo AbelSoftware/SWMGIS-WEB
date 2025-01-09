@@ -47,6 +47,10 @@ export class LayersApiService {
   getLayesList(data:any):Observable<any>{
     return this.http.post(this.baseUrlNew+'/getlayermasterdata',data)
   }
-
-  
+  getLayesSchema(data:any):Observable<any>{
+    return this.http.get(this.baseUrlNew+'/getlayerschema/'+data)
+  }
+  getGeoJsonDataByLayerName(data:any):Observable<any>{
+    return this.http.post(this.baseUrlNew+'/getlayergeojsondata',data)
+  }
 }

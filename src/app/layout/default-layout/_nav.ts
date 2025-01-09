@@ -15,8 +15,8 @@ export const navItems: INavData[] = [
     name: 'Component'
   },
   {
-    name: 'layer',
-    url: '/layer',
+    name: 'Veification',
+    url: '/#',
     iconComponent: { name: 'cil-drop' }
   }
 ];

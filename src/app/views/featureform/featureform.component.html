@@ -1,0 +1,23 @@
+<div cdkDrag cdkDragBoundary="body" class="draggable-dialog">
+    <div cdkDragHandle class="dialog-header">
+      <h6>{{this.featureData.layerName}}</h6>
+      <button mat-icon-button (click)="closeDialog()">✕</button>
+    </div>
+    <div class="dialog-content">
+      <form [formGroup]="featureForm">
+        <div *ngFor="let key of featureForm.controls | keyvalue">
+          <label [for]="key.key">{{ key.key }}</label>
+          <input
+            [id]="key.key"
+            [formControlName]="key.key"
+            type="text"
+            class="form-control"
+          />
+        </div>
+      </form>
+      <hr>
+      <button cButton color="primary" (click)="saveForm()" class="me-md-2">Save</button>
+      <button cButton color="secondary" (click)="closeForm()">Close</button>
+    </div>
+ </div>
+  

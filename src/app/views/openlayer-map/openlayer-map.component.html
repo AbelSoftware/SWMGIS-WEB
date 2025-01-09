@@ -1,42 +1,4 @@
-<!-- <div (click)="printFunction()">print</div> -->
-<c-offcanvas #offcanvasEnd
-  placement="end"
-  [scroll]="true"
-  [visible]="visible"
-  #offcanvasResponsive
-  #offcanvasScroll
->
-  <c-offcanvas-header>
-    <h5 cOffcanvasTitle>Offcanvas Header</h5>
-    <!--<button
-        cButtonClose
-        class="text-reset ms-auto"
-        cOffcanvasToggle="OffcanvasEnd"
-        aria-label="Close"
-        ></button>  --> 
-  </c-offcanvas-header>
-  <c-offcanvas-body>
-    <form class="p-3 border rounded shadow bg-light">
-      <div class="row">
-        <ng-container *ngFor="let i of modelData.remainingProps | keyvalue; let index = index">
-          <div class="col-4 mb-3">
-            <label for="input-{{index}}" class="form-label">{{i.key}}:</label>
-            <input type="text" id="input-{{index}}" name="input-{{index}}"
-                   placeholder="{{i.value}}"
-                   class="form-control" required
-                   [(ngModel)]="formData[i.key]"> <!-- Make sure formData[i.key] is valid -->
-          </div>
-          <div *ngIf="(index + 1) % 3 === 0" class="w-100"></div>
-        </ng-container>
-      </div>
-  
-      <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-primary" (click)="EditLayer()">Submit</button>
-        <button type="button" class="btn btn-secondary" (click)="closeForm()">Close</button>
-      </div>
-    </form>
-  </c-offcanvas-body>
-</c-offcanvas>
+
 
 
  <app-layer-query></app-layer-query>
@@ -46,9 +8,14 @@
   </div>
 </div>
 <app-drawing-tool (messageToParent)="receiveMessage($event)" [selectedValue]="map" ></app-drawing-tool>
-<div id="map" ></div>
+<div id="map" style="position: relative; height: 100vh; width: 100%;"></div>
+  <div class="layer-button"> 
+      <button cButton cOffcanvasToggle="OffcanvasScroll1">Layers</button> 
+    </div>
+ 
 
-<button cButton cOffcanvasToggle="OffcanvasScroll1">Layers</button>
+
+<!-- <button cButton cOffcanvasToggle="OffcanvasScroll1">Layers</button> -->
 
 <c-offcanvas
   id="OffcanvasScroll1"
@@ -59,7 +26,7 @@
   <c-offcanvas-header>   
 
 <c-alert color="success">
-  <h2> Layers                        </h2>
+  <h2> Layers  </h2>
 </c-alert>
     <button
       aria-label="Close"
@@ -97,7 +64,7 @@
           <ul class="list-group">
             <li class="list-group-item" *ngFor="let item of layerList">
           <c-form-check [switch]="true">
-            <input cFormCheckInput checked type="checkbox"  (change)="onCheckboxChange($event, item)" />
+            <input cFormCheckInput type="checkbox"  (change)="onCheckboxChange($event, item)" />
             <label cFormCheckLabel>  {{ item.DisplayName }}</label>       
           </c-form-check>
           </li>
@@ -116,6 +83,67 @@
 
   </c-offcanvas-body>
 </c-offcanvas>
+
+
+<!-- 
+<button cButton [cOffcanvasToggle]="formCanvas.id">Toggle static offcanvas</button>
+
+<c-offcanvas
+  id="OffcanvasStatic"
+  backdrop="static"
+  placement="end"
+  #formCanvas
+>
+  <c-offcanvas-header>
+    <h5 cOffcanvasTitle>Offcanvas Header</h5>
+    <button
+      aria-label="Close"
+      cButtonClose
+      [cOffcanvasToggle]="formCanvas.id"
+      class="text-reset ms-auto"
+    ></button>
+  </c-offcanvas-header>
+  <c-offcanvas-body>
+    <form [formGroup]="dynamicForm" (ngSubmit)="onSubmit()" *ngIf="schema.length>0">
+      <div *ngFor="let field of schema">
+        <label [for]="field.ColumnName">{{ field.DisplayColumnName }}</label>
+        
+        <ng-container [ngSwitch]="field.DataType">
+          <!-- Input for nvarchar -->
+          <!-- <input
+            *ngSwitchCase="'nvarchar'"
+            [formControlName]="field.ColumnName"
+            [attr.placeholder]="field.DisplayColumnName"
+            type="text"
+          /> -->
+    
+          <!-- Input for int -->
+          <!-- <input
+            *ngSwitchCase="'int'"
+            [formControlName]="field.ColumnName"
+            [attr.placeholder]="field.DisplayColumnName"
+            type="number"
+          /> -->
+    
+          <!-- Dropdown for select -->
+          <!-- <select
+            *ngSwitchCase="'select'"
+            [formControlName]="field.ColumnName">
+            <option *ngFor="let option of dropdownOptions[field.ColumnName]" [value]="option">
+              {{ option }}
+            </option>
+          </select> 
+        </ng-container>
+      </div>
+    
+      <button type="submit" [disabled]="dynamicForm.invalid">Submit</button>
+    </form>
+    
+  </c-offcanvas-body>
+</c-offcanvas> -->
+
+
+
 
 <!-- <div *ngIf="visible" class="form" [ngStyle]="formPosition">
   <form class="p-3 border rounded shadow bg-light">

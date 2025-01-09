@@ -3,7 +3,7 @@ import { TableDirective } from '@coreui/angular';
 import {LayersApiService} from '../../../Services/layers-services/layers-api.service'
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DataService ,ModalService} from 'src/app/Services/ModelToggle/modal.service';
+import { DataService ,ModalService} from '../../../Services/ModelToggle/modal.service';
 import {LayerMasterComponent} from '../layer-master/layer-master.component'
 @Component({
   selector: 'app-layer-list',

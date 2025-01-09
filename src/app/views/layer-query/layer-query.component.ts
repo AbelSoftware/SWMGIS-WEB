@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { MapServiceService } from 'src/app/Services/mapService/map-service.service';
+import { MapServiceService } from '../../Services/mapService/map-service.service';
 
 import { LayerQuery } from '../Controller/layerQueryController';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LayersApiService } from 'src/app/Services/layers-services/layers-api.service';
+import { LayersApiService } from '../../Services/layers-services/layers-api.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ExportService } from 'src/app/Services/Export-service/export.service';
+import { ExportService } from '../../Services/Export-service/export.service';
 import { RouterLink } from '@angular/router';
 import { PaginationComponent, PageItemDirective, PageLinkDirective, AlertComponent } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
@@ -84,7 +84,7 @@ export class LayerQueryComponent {
   }
 
   getPagesToShow() {
-    const visiblePages = [];
+    const visiblePages:any = [];
     const maxPagesToShow = 3;  // Number of pages to display around the current page
 
     const startPage = Math.max(2, this.currentPage - Math.floor(maxPagesToShow / 2));

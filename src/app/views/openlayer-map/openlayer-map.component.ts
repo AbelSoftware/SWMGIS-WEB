@@ -8,7 +8,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Style from 'ol/style/Style';
 import { LayersApiService } from '../../Services/layers-services/layers-api.service';
-import { ButtonDirective, ModalBodyComponent, ModalComponent, ModalFooterComponent, ModalHeaderComponent, ModalTitleDirective, OffcanvasBodyComponent, OffcanvasComponent, OffcanvasHeaderComponent, OffcanvasModule, SpinnerComponent, OffcanvasService, OffcanvasToggleDirective,ButtonModule, CardModule, AlertModule, AccordionModule, SharedModule, GridModule } from '@coreui/angular';
+import { ButtonDirective, ModalBodyComponent, ModalComponent, ModalFooterComponent, ModalHeaderComponent, ModalTitleDirective, OffcanvasBodyComponent, OffcanvasComponent, OffcanvasHeaderComponent, OffcanvasModule, SpinnerComponent, OffcanvasService, OffcanvasToggleDirective, ButtonModule, CardModule, AlertModule, AccordionModule, SharedModule, GridModule } from '@coreui/angular';
 import { Coordinate } from 'ol/coordinate';
 import { FullScreen, defaults as defaultControls } from 'ol/control.js';
 import Stroke from 'ol/style/Stroke';
@@ -21,14 +21,15 @@ import { CommonModule } from '@angular/common';;
 import MapBrowserEvent from 'ol/MapBrowserEvent';
 import { FormModule } from '@coreui/angular';
 import { LayerQueryComponent } from '../layer-query/layer-query.component'
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { click } from 'ol/events/condition';
 import { Select } from 'ol/interaction';
 import CircleStyle from 'ol/style/Circle';
 import { ExportService } from '../../Services/Export-service/export.service';
-
-
+import GeoJSON from 'ol/format/GeoJSON';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FeatureformComponent } from '../featureform/featureform.component';
 interface RemainingProps {
   [key: string]: string; // Define key-value pairs where keys are strings and values are strings
 }
@@ -43,9 +44,10 @@ interface RemainingProps {
   imports: [OffcanvasModule, OffcanvasComponent, OffcanvasBodyComponent,
     OffcanvasHeaderComponent, SpinnerComponent, LayerQueryComponent,
     FormModule, CommonModule, ButtonDirective, DrawingToolComponent,
-    ModalComponent, ModalHeaderComponent, ModalTitleDirective,
-    ModalBodyComponent, ModalFooterComponent, FormsModule,ButtonModule,CardModule,AlertModule, AccordionModule,
-    SharedModule,GridModule],
+    ModalComponent, ModalHeaderComponent, ModalTitleDirective, ReactiveFormsModule,
+    ModalBodyComponent, ModalFooterComponent, FormsModule, ButtonModule, CardModule, AlertModule, AccordionModule,
+    SharedModule, GridModule],
+
   templateUrl: './openlayer-map.component.html',
   styleUrl: './openlayer-map.component.scss'
 })
@@ -84,11 +86,23 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
   private linecoordinates: any[] = [];
   vectorSource!: VectorSource;
   drawInteraction: any = null;
-  layerList:any=[]
-  constructor(private service: LayersApiService,
+  layerList: any = []
+  layerMap: any = []; // Store active layers
+  dynamicForm!: FormGroup;
+  schema: any[] = [
+    // Paste your schema here
+  ];
+
+  // Example dropdown options for select fields
+  dropdownOptions: { [key: string]: string[] } = {
+    Remark: ['Option 1', 'Option 2', 'Option 3'] // Replace with actual options
+  };
+  dialogRef: MatDialogRef<FeatureformComponent> | null = null; // Declare as a class-level variable
+
+  constructor(private service: LayersApiService, private fb: FormBuilder,
     private MapService: MapServiceService,
     private ExportService: ExportService,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef, private dialog: MatDialog,  ) {
     let layerObj = {
       "LayerName": "Layers",
       "FilterKey1": null,
@@ -103,105 +117,221 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
     }
     this.service.getLayesList(layerObj).subscribe(
       (response) => {
-        this.layerList=response.data
+        this.layerList = response.data
         console.log(response);
       },
       (error) => {
         console.log(error)
       });
-     }
-    
-
-  getLatLong(data: any) {
-    this.service.getlayersById(data).subscribe(response => {
-      console.log(response)
-      for (let i of response.data) {
-        this.storedCoordinates.push([i.Long, i.Lat])
-        const markerCoordinates = fromLonLat([i.Long, i.Lat]);
-
-        // Create a feature for the marker
-        const marker = new Feature({
-          geometry: new Point(markerCoordinates),
-          i
-        });
-
-        // Style the marker
-        marker.setStyle(new Style({
-          text: new Text({
-            // text: '^', // The marker text
-            font: '24px Arial', // Font size and family
-            fill: new Fill({
-              color: 'red', // Text color
-            }),
-            offsetX: 0, // Horizontal offset
-            offsetY: -10, // Vertical offset to position above the point
-            textAlign: 'center', // Center the text
-          })
-        }))
-
-        // Create a vector source and layer for the marker
-        const vectorSource = new VectorSource({
-          features: [marker]
-        });
-
-        const markerLayer = new VectorLayer({
-          source: vectorSource
-        });
-
-        // Add the marker layer to the map
-        this.map.addLayer(markerLayer);
-
-        // Set up a click event listener on the map
-
-
-      }
-
-
-    })
   }
 
-  onMapClick(event: MapBrowserEvent<MouseEvent>): void {
-    this.visible = true;
-    console.log(event)
-    const coordinate = event.coordinate;
 
-    // Convert coordinates to pixel to position the form
-    const pixel = this.map.getPixelFromCoordinate(coordinate);
-    this.formPosition = {
-      top: `${pixel[1]}px`,
-      left: `${pixel[0]}px`
-    };
-  }
+  // getLatLong(data: any) {
+  //   this.service.getlayersById(data).subscribe(response => {
+  //     console.log(response)
+  //     for (let i of response.data) {
+  //       this.storedCoordinates.push([i.Long, i.Lat])
+  //       const markerCoordinates = fromLonLat([i.Long, i.Lat]);
+
+  //       // Create a feature for the marker
+  //       const marker = new Feature({
+  //         geometry: new Point(markerCoordinates),
+  //         i
+  //       });
+
+  //       // Style the marker
+  //       marker.setStyle(new Style({
+  //         text: new Text({
+  //           // text: '^', // The marker text
+  //           font: '24px Arial', // Font size and family
+  //           fill: new Fill({
+  //             color: 'red', // Text color
+  //           }),
+  //           offsetX: 0, // Horizontal offset
+  //           offsetY: -10, // Vertical offset to position above the point
+  //           textAlign: 'center', // Center the text
+  //         })
+  //       }))
+
+  //       // Create a vector source and layer for the marker
+  //       const vectorSource = new VectorSource({
+  //         features: [marker]
+  //       });
+
+  //       const markerLayer = new VectorLayer({
+  //         source: vectorSource
+  //       });
+
+  //       // Add the marker layer to the map
+  //       this.map.addLayer(markerLayer);
+
+  //       // Set up a click event listener on the map
+
+
+  //     }
+
+
+  //   })
+  // }
+
+  // onMapClick(event: MapBrowserEvent<MouseEvent>): void {
+  //   this.visible = true;
+  //  // console.log(event)
+  //   const coordinate = event.coordinate;
+  //   // Convert coordinates to pixel to position the form
+  //   const pixel = this.map.getPixelFromCoordinate(coordinate);
+  //   this.formPosition = {
+  //     top: `${pixel[1]}px`,
+  //     left: `${pixel[0]}px`
+  //   };
+  // }
 
   closeForm(): void {
     this.visible = false;
   }
 
-  ngOnChanges() {
-    // Logic to handle changes to selectedValue
-    console.log('Selected value changed:', this.selectedValue);
-    // Here you can call methods to update the map based on selectedValue
-
-    let req = {
-      "flag": "getAllGeom",
-      "Spname": "spGeoJson_StreetLightPole",
-      "data": {
-        "table": this.selectedValue
-      }
-    }
-
-    this.getGeometryLine(req)
-  }
+  // ngOnChanges() {
+  //   // Logic to handle changes to selectedValue
+  //   console.log('Selected value changed:', this.selectedValue);
+  //   // Here you can call methods to update the map based on selectedValue
+  //   let req = {
+  //     "flag": "getAllGeom",
+  //     "Spname": "spGeoJson_StreetLightPole",
+  //     "data": {
+  //       "table": this.selectedValue
+  //     }
+  //   }
+  //   this.getGeometryLine(req)
+  // }
   onCheckboxChange(event: any, item: any) {
-    item.selected = event.target.checked;
-
+    //item.selected = event.target.checked;
+    const isChecked = event.target.checked;
+    console.log("Layer isChecked :" + isChecked)
+    if (isChecked) {
+      // Fetch and add the layer
+      this.addLayerToMap(item.LayerName);
+      console.log("Layer selected :" + item.LayerName)
+    } else {
+      console.log("Layer De-selected :" + item.LayerName)
+      // Remove the layer from the map
+      this.removeLayerFromMap(item.LayerName);
+    }
     // // Update selectedValues array
     //  let selectedValues = this.layerList
     //    .filter((i) => i.selected)
-      
 
-    console.log('Selected Values:', item);
   }
+
+  addLayerToMap(layer: any) {
+    let apiData = {
+      "LayerName": layer,
+      "Zone": null,
+      "Ward": null,
+      "Prabhag": null,
+      "Latitude": null,
+      "Longitude": null,
+      "qgs_fid": null
+    }
+    this.service.getGeoJsonDataByLayerName(apiData).subscribe(
+      (response: any) => {
+     
+        const vectorSource = new VectorSource({
+          features: new GeoJSON().readFeatures(response.data, {
+            featureProjection: 'EPSG:3857', // Convert to map projection
+          }),
+        });
+
+        const vectorLayer = new VectorLayer({
+          source: vectorSource,
+          style: new Style({
+            image: new CircleStyle({
+              radius: 6,
+              fill: new Fill({ color: 'blue' }),
+              stroke: new Stroke({ color: 'white', width: 2 }),
+            }),
+             stroke: new Stroke({
+    color: 'red', // Color of the line
+    width: 4, // Width of the line
+    lineDash: [10, 5], // Optional: Dash pattern (10px line, 5px gap)
+    lineCap: 'round', // Optional: Rounded line ends (default is "butt")
+    lineJoin: 'round', // Optional: Rounded corners where lines meet (default is "miter")
+  }),
+          }),
+        });
+
+        // Add the layer to the map
+        vectorLayer.set('name', layer);
+        let map = this.MapService.getMap();
+        if (map) {
+          map.addLayer(vectorLayer);
+
+          // Zoom to the layer's extent
+          const extent = vectorSource.getExtent();
+          if (extent && extent.length === 4) {
+            map.getView().fit(extent, { padding: [50, 50, 50, 50], duration: 1000 });
+          }
+        } else {
+          console.error('Map instance is not initialized.');
+        }
+      },
+      (error: any) => {
+        console.log(error);
+      }
+    )
+    // fetch(apiUrl)
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     const vectorSource = new VectorSource({
+    //       features: new GeoJSON().readFeatures(data, {
+    //         featureProjection: 'EPSG:3857', // Convert to map projection
+    //       }),
+    //     });
+
+    //     const vectorLayer = new VectorLayer({
+    //       source: vectorSource,
+    //     });
+
+    //     // Add the layer to the map and store it
+    //     this.map.addLayer(vectorLayer);
+    //   //  this.layerMap.set(layer.LayerName, vectorLayer);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error fetching layer data:', error);
+    //   });
+  }
+
+  removeLayerFromMap(layerName: string) {
+    // Retrieve all layers on the map
+    const layers = this.map.getLayers().getArray();
+
+    // Find the layer with the matching name
+    const layerToRemove = layers.find(layer => layer.get('name') === layerName);
+
+    if (layerToRemove) {
+      // Check if the layer is a VectorLayer
+      if (layerToRemove instanceof VectorLayer) {
+        const source = layerToRemove.getSource();
+        if (source) {
+          source.clear(); // Clear all features in the layer
+        }
+      }
+
+      // Remove the layer from the map
+      this.map.removeLayer(layerToRemove);
+
+      console.log(`Layer '${layerName}' removed successfully.`);
+    } else {
+      console.warn(`Layer '${layerName}' not found on the map.`);
+    }
+
+    // Force the map to recalculate its layout and refresh
+    this.map.updateSize();
+  }
+
+
+
+
+
   @ViewChild('offcanvasEnd', { static: false }) offcanvasEnd: any;
 
   toggleOffcanvas() {
@@ -215,29 +345,29 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
   }
   ngOnInit(): void {
     console.log("openlayer")
-    this.toggleOffcanvas()
-    this.MapService.myEvent.subscribe((datas) => {
-      console.log(datas)
-      if (this.modelAdditionalData.selected) {
-        let data
-        try {
-          if (this.AllLayerData[this.modelAdditionalData.LayerType][1]) {
-            data = this.AllLayerData[this.modelAdditionalData.LayerType][1]
-            data.remainingProps = ''
-            this.modelData = data
-          }
-        } catch (errors) {
-          console.log(errors)
-        }
+    // this.toggleOffcanvas()
+    // this.MapService.myEvent.subscribe((datas) => {
+    //   console.log(datas)
+    //   if (this.modelAdditionalData.selected) {
+    //     let data
+    //     try {
+    //       if (this.AllLayerData[this.modelAdditionalData.LayerType][1]) {
+    //         data = this.AllLayerData[this.modelAdditionalData.LayerType][1]
+    //         data.remainingProps = ''
+    //         this.modelData = data
+    //       }
+    //     } catch (errors) {
+    //       console.log(errors)
+    //     }
 
-        this.formData = datas.AllCord
+    //     this.formData = datas.AllCord
 
-        this.isNewForm = true
+    //     this.isNewForm = true
 
-        console.log("Updated")
-      }
-      this.onMapClick(datas);
-    });
+    //     console.log("Updated")
+    //   }
+    // //  this.onMapClick(datas);
+    // });
 
     this.MapService.initializeMap('map')
     this.map = this.MapService.getMap()
@@ -251,11 +381,10 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
       console.log("clikd", this.visible)
       // Get the coordinates in map projection (EPSG:3857)
       const clickedCoordinate = event.coordinate;
-
       // Convert to geographic coordinates (EPSG:4326)
       const lonLat = toLonLat(clickedCoordinate);
 
-      this.getLatLong({ lat: lonLat[1], long: lonLat[0] })
+      // this.getLatLong({ lat: lonLat[1], long: lonLat[0] })
       this.handleFeatureClick(event);
       console.log(lonLat);
       // Format and display the coordinates
@@ -278,35 +407,62 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
   }
 
   handleFeatureClick(evt: any) {
-    const feature = this.MapService.map.forEachFeatureAtPixel(evt.pixel, (feature) => {
-      return feature;
-    });
-    console.log(feature)
-    console.log(this.isNewForm)
+    this.MapService.map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
+      const layerName = layer.get('name');
+      // console.log('Clicked on Layer:', layerName);
+      // console.log(feature)
+      // console.log(this.isNewForm)
+      // console.log(layer);
+      // console.log(feature?.get('Type'));
+      const featureData = feature.getProperties();
+     // console.log('Feature Data:', featureData["qgs_fid"]);
+     
+      if (this.dialogRef!) {
+        this.dialogRef.close()
+      }
+       this.dialogRef = this.dialog.open(FeatureformComponent, {
+        data: {
+          layerName: layerName,
+          featureProperties: featureData
+        },
+        hasBackdrop: false,
+        height: "100vh", width: "430px",
+        panelClass: 'custom-dialog-container'
+      });
 
-    if (feature && !this.isNewForm) {
-      this.isNewForm = false
-      const featureId = feature.get('Id'); // Get the feature ID
-      console.log(feature.get('Type'))
-      let LayerType = feature.get('Type') == 'MultiLineString' ? 'LineString' : feature.get('Type')
-      this.modelAdditionalData.Type = feature.get('Type')
-      const featureInfo = this.AllLayerData[LayerType].find((f: any) => f.Id === featureId); // Find the feature data by ID
-      console.log(featureInfo)
-      this.modelData = featureInfo
-      const getData = this.RawLayerData.find((f: any) => (f.qgs_fid === this.modelData.Id) || (f.objectid === this.modelData.Id)); // Find the feature data by ID
-
-      for (const key in getData) {
-        if (getData.hasOwnProperty(key)) {
-          this.formData[key] = getData[key] ?? ''; // Initialize with an empty string
+      this.dialogRef.afterClosed().subscribe((updatedFeatureData) => {
+        if (updatedFeatureData) {
+          console.log('Updated Feature Data:', updatedFeatureData);
+          this.dialogRef=null;
+          // You can now update the feature's properties
+          //feature.setProperties(updatedFeatureData);
         }
-      }
-      if (featureInfo) {
-        this.onMapClick(evt)
-        // Show tooltip with the feature's specific data
-        // this.showTooltip(featureInfo.data);
-      }
+      });
+    });
 
-    }
+    // if (feature && !this.isNewForm) {
+    //   this.isNewForm = false
+    //   const featureId = feature.get('Id'); // Get the feature ID
+    //   console.log(feature.get('Type'))
+    //   let LayerType = feature.get('Type') == 'MultiLineString' ? 'LineString' : feature.get('Type')
+    //   this.modelAdditionalData.Type = feature.get('Type')
+    //   const featureInfo = this.AllLayerData[LayerType].find((f: any) => f.Id === featureId); // Find the feature data by ID
+    //   console.log(featureInfo)
+    //   this.modelData = featureInfo
+    //   const getData = this.RawLayerData.find((f: any) => (f.qgs_fid === this.modelData.Id) || (f.objectid === this.modelData.Id)); // Find the feature data by ID
+
+    //   for (const key in getData) {
+    //     if (getData.hasOwnProperty(key)) {
+    //       this.formData[key] = getData[key] ?? ''; // Initialize with an empty string
+    //     }
+    //   }
+    //   if (featureInfo) {
+    //    // this.onMapClick(evt)
+    //     // Show tooltip with the feature's specific data
+    //     // this.showTooltip(featureInfo.data);
+    //   }
+
+    // }
   }
 
 
@@ -329,8 +485,6 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
     });
     this.map.addLayer(vectorLayer);
     this.map.addControl(fullScreenControl);
-
-
   }
 
   getGeometryLine(req: any) {
@@ -367,10 +521,6 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
               vectorLayer = drawPolygoneLine([i], type)
               this.MapService.map.addLayer(vectorLayer)
             }
-
-
-
-
           } else if (type == 'Point') {
             if (this.AllLayerData['Point']) {
               this.AllLayerData['Point'] = this.AllLayerData['Point'].concat(this.linecoordinates)
@@ -415,9 +565,6 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
     if (this.AllLayerData.length != '{}') {
       this.exportExcel();
     }
-
-
-
 
     if (!mapSize || mapSize[0] <= 0 || mapSize[1] <= 0) {
       console.error('Invalid map size.');
@@ -495,7 +642,6 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
 
   private exportExcel() {
     const exports: any = [];
-
     for (let i in this.AllLayerData) {
       console.log(i);
       let data: any = [];
@@ -506,7 +652,6 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
         data.push(obj);
         delete obj.remainingProps;
       }
-
       // Push the data and unique filename into the exports array
       exports.push({ data, fileName: i });
     }
@@ -675,4 +820,40 @@ export class OpenlayerMapComponent implements OnInit, AfterViewInit {
     feature.setStyle(highlightStyle);
   }
 
+
+
+
+  createForm() {
+    const formControls: { [key: string]: any } = {};
+
+    this.schema.forEach(field => {
+      const validators: any = [];
+
+      // Add required validator if needed
+      if (field.IsRequired) {
+        validators.push(Validators.required);
+      }
+
+      // Add minlength and maxlength validators
+      if (field.MinLength) {
+        validators.push(Validators.minLength(field.MinLength));
+      }
+      if (field.MaxLength) {
+        validators.push(Validators.maxLength(field.MaxLength));
+      }
+
+      // Initialize form control
+      formControls[field.ColumnName] = ['', validators];
+    });
+
+    this.dynamicForm = this.fb.group(formControls);
+  }
+
+  onSubmit() {
+    if (this.dynamicForm.valid) {
+      console.log(this.dynamicForm.value);
+    } else {
+      console.error('Form is invalid');
+    }
+  }
 }

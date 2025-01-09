@@ -164,3 +164,15 @@
     transform: none !important;
   }
   
+  .layer-button {
+    position: absolute;
+    bottom: 20px; /* Distance from the bottom */
+    left: 300px;  /* Distance from the left */
+    z-index: 1000; /* Ensures it stays above other elements on the map */
+    background-color: #fff; /* Optional: background color for visibility */
+    padding: 10px; /* Optional: add padding for better appearance */
+    border: 1px solid #ccc; /* Optional: border for button styling */
+    border-radius: 5px; /* Optional: rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: shadow effect */
+    cursor: pointer; /* Pointer cursor for better UX */
+  }

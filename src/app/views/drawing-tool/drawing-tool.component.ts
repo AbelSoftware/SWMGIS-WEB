@@ -41,8 +41,7 @@ export class DrawingToolComponent {
   selected: any = ''
   constructor(private layerService : LayersApiService,private service : MapServiceService,private modalService: NgbModal,private openlayer:OpenlayerMapComponent,private xlsxService:ExportService){}
 
-  ngOnInit():void{
-    
+  ngOnInit():void{    
 
     const editControl = new EditControl(this.service.map,()=>{
       this.openModal(this.drawingModal)
@@ -79,7 +78,7 @@ export class DrawingToolComponent {
       // Handle selection change
     });
 
-    this.service.map.addControl(dropdownControl);
+   // this.service.map.addControl(dropdownControl);
     
   })
   
